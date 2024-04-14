@@ -1,2 +1,1 @@
-def txt_importer(path_file):
-   
+def txt_importer(path_file): ...
