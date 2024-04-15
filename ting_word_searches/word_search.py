@@ -9,29 +9,35 @@ def search_by_word(word, instance: Queue):
     return search_queue(word, instance, True)
 
 
-def search_queue(word, instance: Queue, return_text=False):
+def check_line_for_word(line, word):
+    """Helper function to check if a word exists in a line."""
+    return word.lower() in line.lower()
+
+
+def get_occurrences_for_line(line_number, linha, word, return_text=False):
+    # Helper function to generate occurrences for a line containing the word.
+    occurrences = []
+    if check_line_for_word(linha, word):
+        if return_text:
+            occurrences.append({"linha": line_number, "conteudo": linha})
+        else:
+            occurrences.append({"linha": line_number})
+    return occurrences
+
+
+def search_queue(word, instance, return_text=False):
     result = []
 
-    # Iterate over each file in the queue
     for file in instance._queue:
-        # Prepare the occurrence list for the current file
         occurrences = []
 
-        # Iterate over each line in the file
         for line_number, linha in enumerate(
             file["linhas_do_arquivo"], start=1
         ):
-            # Check for the word (case insensitive)
-            if word.lower() in linha.lower():
-                # Record the line number and conten (if required) where the word is found
-                if return_text:
-                    occurrences.append(
-                        {"linha": line_number, "conteudo": linha}
-                    )
-                else:
-                    occurrences.append({"linha": line_number})
+            occurrences.extend(
+                get_occurrences_for_line(line_number, linha, word, return_text)
+            )
 
-        # If occurrences were found, add them to the result
         if occurrences:
             result.append(
                 {
